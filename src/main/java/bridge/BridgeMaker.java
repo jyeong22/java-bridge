@@ -28,6 +28,6 @@ public class BridgeMaker {
                 bridgeList.add("U");
             }
         }
-        return  bridgeList;
+        return bridgeList;
     }
 }
