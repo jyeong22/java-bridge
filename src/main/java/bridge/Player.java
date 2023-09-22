@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private static List<String> playerProcess;
-    private static Bridge bridge;
-    private static InputView inputView = new InputView();
-    private static OutputView outputView = new OutputView();
+
+    private final Bridge bridge;
+    private static List<String> playerMap;
     private static final String upString = "U";
     private static final String downString = "D";
     private static final String retryCommand = "R";
@@ -15,43 +14,24 @@ public class Player {
 
     Player(Bridge bridge){
         this.bridge = bridge;
-        playerProcess = new ArrayList<>();
+        setInitialState();
     }
 
-    public String playerMove(){
-        String direction = validateDirection(inputDirection());
-        playerProcess.add(direction);
-        return printPlayerProcess();
+    public void setInitialState() {
+        playerMap = new ArrayList<>();
     }
 
-    public String askRetryOrQuit(){
-        return validateInput(inputView.readGameCommand());
+    public void moveOneCompartment(){
+        addPlayerMap(input());
+        printPlayerMap();
     }
 
-    private String validateInput(String readGameCommand) {
-        if(isEmptyString(readGameCommand)){
-            throw new IllegalArgumentException("[ERROR] 재시도 여부를 입력해주세요.");
-        }
-        else if (!isROrQ(readGameCommand)){
-            throw new IllegalArgumentException("[ERROR] 재시도할지 여부를 R과 Q중에 입력해주세요.");
-        }
-        return readGameCommand;
+    private String input() {
+        return validateDirection(InputView.readMoving());
     }
 
-    private boolean isROrQ(String readGameCommand) {
-        return readGameCommand.equals(retryCommand) || readGameCommand.equals(quitCommand);
-    }
-
-    public static Bridge getBridge() {
-        return bridge;
-    }
-
-    public static List<String> getPlayerProcess() {
-        return playerProcess;
-    }
-
-    private String inputDirection() {
-        return inputView.readMoving();
+    private void addPlayerMap(String moveDirection) {
+        playerMap.add(moveDirection);
     }
 
     private String validateDirection(String inputDirection) {
@@ -72,18 +52,36 @@ public class Player {
         return inputDirection.equals(upString) || inputDirection.equals(downString);
     }
 
-    public String printPlayerProcess() {
-        return outputView.printMap(this);
+    public void printPlayerMap() {
+        OutputView.printMap(playerMap, bridge.getBridgeList());
     }
 
-    public void reset() {
-        playerProcess = new ArrayList<>();
-
+    public String askRetryOrQuit(){
+        return validateInput(InputView.readGameCommand());
     }
 
-    public void printTotalResult(int count, boolean isSuccess) {
+    private String validateInput(String readGameCommand) {
+        if(isEmptyString(readGameCommand)){
+            throw new IllegalArgumentException("[ERROR] 재시도 여부를 입력해주세요.");
+        }
+        else if (!isROrQ(readGameCommand)){
+            throw new IllegalArgumentException("[ERROR] 재시도할지 여부를 R과 Q중에 입력해주세요.");
+        }
+        return readGameCommand;
+    }
+
+    private boolean isROrQ(String readGameCommand) {
+        return readGameCommand.equals(retryCommand) || readGameCommand.equals(quitCommand);
+    }
+
+    public void printTotalResult(boolean isSuccess, int count) {
         System.out.println("최종 게임 결과");
-        outputView.printMap(this);
-        outputView.printResult(count, isSuccess);
+        OutputView.printMap(playerMap, bridge.getBridgeList());
+        OutputView.printResult(isSuccess, count);
+    }
+
+    public boolean canGo(){
+        int index = playerMap.size()-1;
+        return playerMap.get(index).equals(bridge.getBridgeList().get(index));
     }
 }

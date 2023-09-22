@@ -1,70 +1,94 @@
 package bridge;
 
-/**
- * 다리 건너기 게임을 관리하는 클래스
- */
 public class BridgeGame {
 
-    private static Player player;
     private static Bridge bridge;
-    private static int count = 0;
+    private static Player player;
+    private static int tryCount = 0;
     private static boolean isSuccess = true;
 
     public void process(){
-        bridge = new Bridge();
-        player = new Player(bridge);
+        bridge = setBridge();
+        player = setPlayer();
         move();
-        printTotalResult();
+        printFinalResult();
     }
 
+    private Bridge setBridge() {
+        return new Bridge();
+    }
 
-    /**
-     * 사용자가 칸을 이동할 때 사용하는 메서드
-     * <p>
-     * 이동을 위해 필요한 메서드의 반환 타입(return type), 인자(parameter)는 자유롭게 추가하거나 변경할 수 있다.
-     */
+    private Player setPlayer() {
+        return new Player(bridge);
+    }
+
     public void move() {
-        ++count;
-        int startIndex = 0;
-        while(startIndex != bridge.getLength() && isSuccess){
-            String canGo = player.playerMove();
-            if(canGo.equals("X")){
+        boolean quitGameValue = false;
+        while(!quitGameValue){
+            addTryCount();
+            goAhead();
+            quitGameValue = checkSuccessOrFail();
+        }
+    }
+
+    private void addTryCount() {
+        ++tryCount;
+    }
+
+    private void goAhead() {
+        int currentLocation = 0;
+        while(isNotEndOfBridge(currentLocation)){
+            player.moveOneCompartment();
+            if(!player.canGo()){
                 isSuccess = false;
+                return;
             }
-            ++startIndex;
-        }
-        if(!isSuccess){
-            askRetryOrQuit();
+            ++currentLocation;
         }
     }
 
+    private boolean isNotEndOfBridge(int currentLocation) {
+        return currentLocation != bridge.getSize();
+    }
 
-    private void askRetryOrQuit() {
-        if(player.askRetryOrQuit().equals("R")){
-            retry();
-            move();
+    private boolean checkSuccessOrFail() {
+        if(fail()){
+            return askPlayerToQuit();
         }
+        return true;
     }
 
-    private void printTotalResult() {
-        player.printTotalResult(count, isSuccess);
+    private boolean fail() {
+        return !isSuccess;
     }
 
-    /**
-     * 사용자가 게임을 다시 시도할 때 사용하는 메서드
-     * <p>
-     * 재시작을 위해 필요한 메서드의 반환 타입(return type), 인자(parameter)는 자유롭게 추가하거나 변경할 수 있다.
-     */
+    private boolean askPlayerToQuit() {
+        if(quit()){
+            return true;
+        }
+        retry();
+        return false;
+    }
+
+    private boolean quit() {
+        return player.askRetryOrQuit().equals("Q");
+    }
+
     public void retry() {
         resetPlayerMap();
-        resetSuccess();
-    }
-
-    private void resetSuccess() {
-        isSuccess = true;
+        resetSuccessValue();
     }
 
     private void resetPlayerMap() {
-        player.reset();
+        player.setInitialState();
     }
+
+    private void resetSuccessValue() {
+        isSuccess = true;
+    }
+
+    private void printFinalResult() {
+        player.printTotalResult(isSuccess, tryCount);
+    }
+
 }
