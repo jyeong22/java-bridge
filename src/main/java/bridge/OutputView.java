@@ -19,7 +19,7 @@ public class OutputView {
     private static final String endOfBridge = "]";
     private static final String space = " ";
 
-    public void printStartGameMessage(){
+    public static void printStartGameMessage(){
         System.out.println(startGameMessage);
     }
 

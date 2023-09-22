@@ -84,4 +84,5 @@ public class Player {
         int index = playerMap.size()-1;
         return playerMap.get(index).equals(bridge.getBridgeList().get(index));
     }
+
 }

@@ -11,7 +11,6 @@ public class BridgeGame {
         bridge = setBridge();
         player = setPlayer();
         move();
-        printFinalResult();
     }
 
     private Bridge setBridge() {
@@ -87,8 +86,11 @@ public class BridgeGame {
         isSuccess = true;
     }
 
-    private void printFinalResult() {
-        player.printTotalResult(isSuccess, tryCount);
+    public static boolean getSuccessValue() {
+        return isSuccess;
     }
 
+    public static int getTryCount() {
+        return tryCount;
+    }
 }
