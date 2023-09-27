@@ -1,4 +1,6 @@
-package bridge;
+package bridge.view;
+
+import bridge.controller.BridgeGame;
 
 import java.util.List;
 
@@ -7,6 +9,7 @@ public class OutputView {
     private static final String startGameMessage = "다리 건너기 게임을 시작합니다.\n";
     private static final String isSuccessMessage = "게임 성공 여부: ";
     private static final String totalCountMessage = "총 시도한 횟수: ";
+    private static final String finalResultMessage = "최종 게임 결과";
     private static final String upString = "U";
     private static final String downString = "D";
     private static final String failMessage = "실패";
@@ -77,9 +80,11 @@ public class OutputView {
         outputString.append(endOfBridge);
     }
 
-    public static void printResult(boolean isSuccess, int count) {
+    public static void printResult(List<String> playerMap, List<String> bridgeList, boolean isSuccess, int tryCount) {
+        System.out.println(finalResultMessage);
+        printMap(playerMap, bridgeList);
         printSuccessOrFail(isSuccess);
-        printTotalTryCount(count);
+        printTotalTryCount(tryCount);
     }
 
     private static void printSuccessOrFail(boolean isSuccess) {

@@ -1,29 +1,29 @@
-package bridge;
+package bridge.domain;
+
+import bridge.view.InputView;
+import bridge.view.OutputView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
 
-    private final Bridge bridge;
     private static List<String> playerMap;
     private static final String upString = "U";
     private static final String downString = "D";
     private static final String retryCommand = "R";
     private static final String quitCommand = "Q";
 
-    Player(Bridge bridge){
-        this.bridge = bridge;
-        setInitialState();
+    public Player(){
+        setInitialMap();
     }
 
-    public void setInitialState() {
+    public void setInitialMap() {
         playerMap = new ArrayList<>();
     }
 
     public void moveOneCompartment(){
         addPlayerMap(input());
-        printPlayerMap();
     }
 
     private String input() {
@@ -52,8 +52,8 @@ public class Player {
         return inputDirection.equals(upString) || inputDirection.equals(downString);
     }
 
-    public void printPlayerMap() {
-        OutputView.printMap(playerMap, bridge.getBridgeList());
+    public static List<String> getPlayerMap() {
+        return playerMap;
     }
 
     public String askRetryOrQuit(){
@@ -69,20 +69,7 @@ public class Player {
         }
         return readGameCommand;
     }
-
     private boolean isROrQ(String readGameCommand) {
         return readGameCommand.equals(retryCommand) || readGameCommand.equals(quitCommand);
     }
-
-    public void printTotalResult(boolean isSuccess, int count) {
-        System.out.println("최종 게임 결과");
-        OutputView.printMap(playerMap, bridge.getBridgeList());
-        OutputView.printResult(isSuccess, count);
-    }
-
-    public boolean canGo(){
-        int index = playerMap.size()-1;
-        return playerMap.get(index).equals(bridge.getBridgeList().get(index));
-    }
-
 }

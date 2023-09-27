@@ -1,4 +1,8 @@
-package bridge;
+package bridge.domain;
+
+import bridge.BridgeMaker;
+import bridge.BridgeRandomNumberGenerator;
+import bridge.view.InputView;
 
 import java.util.List;
 
@@ -9,7 +13,7 @@ public class Bridge {
     private static final int minimumSize = 3;
     private static final int maximumSize = 20;
 
-    Bridge(){
+     public Bridge(){
         setSize(validate(InputView.readBridgeSize()));
         setBridgeList();
         System.out.println();

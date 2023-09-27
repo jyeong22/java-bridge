@@ -1,24 +1,35 @@
-package bridge;
+package bridge.controller;
+
+import bridge.domain.Bridge;
+import bridge.domain.Player;
+import bridge.view.OutputView;
 
 public class BridgeGame {
 
-    private static Bridge bridge;
-    private static Player player;
     private static int tryCount = 0;
     private static boolean isSuccess = true;
+    private static Bridge bridge;
+    private static Player player;
 
-    public void process(){
-        bridge = setBridge();
-        player = setPlayer();
+    public void gameProcess(){
+        printStartMessage();
+        initializeBridgeAndPlayer();
         move();
+        printResult();
     }
 
-    private Bridge setBridge() {
-        return new Bridge();
+    public void printStartMessage() {
+        OutputView.printStartGameMessage();
     }
 
-    private Player setPlayer() {
-        return new Player(bridge);
+    public void initializeBridgeAndPlayer(){
+        bridge = new Bridge();
+        player = new Player();
+    }
+
+    public void printResult() {
+        OutputView.printResult(player.getPlayerMap(), bridge.getBridgeList(), isSuccess, tryCount);
+
     }
 
     public void move() {
@@ -37,13 +48,23 @@ public class BridgeGame {
     private void goAhead() {
         int currentLocation = 0;
         while(isNotEndOfBridge(currentLocation)){
-            player.moveOneCompartment();
-            if(!player.canGo()){
+            chooseMoveDirection();
+            if(!canGo()){
                 isSuccess = false;
                 return;
             }
             ++currentLocation;
         }
+    }
+
+    public void chooseMoveDirection(){
+        player.moveOneCompartment();
+        OutputView.printMap(player.getPlayerMap(), bridge.getBridgeList());
+    }
+
+    public boolean canGo(){
+        int index = player.getPlayerMap().size()-1;
+        return player.getPlayerMap().get(index).equals(bridge.getBridgeList().get(index));
     }
 
     private boolean isNotEndOfBridge(int currentLocation) {
@@ -79,18 +100,11 @@ public class BridgeGame {
     }
 
     private void resetPlayerMap() {
-        player.setInitialState();
+        player.setInitialMap();
     }
 
     private void resetSuccessValue() {
         isSuccess = true;
     }
 
-    public static boolean getSuccessValue() {
-        return isSuccess;
-    }
-
-    public static int getTryCount() {
-        return tryCount;
-    }
 }
